@@ -1,0 +1,104 @@
+import processing.sound.*;
+//SoundFile fly_buzz;
+SoundFile smack;
+int fly_dead;
+PImage fly; PImage flybye;
+PImage swatter; PImage swatted;
+float x_dir = .1; float y_dir = .1;
+float x = random(1,400); float y = random(1,400);
+boolean fly_alive = true;
+float splat_x; float splat_y;
+int fly_counter = 0; int i = 0;
+int [] score = new int [11]; 
+boolean game_state = true; float timer = 0;
+
+
+void setup(){
+  frameRate(600);
+  size(600,600);
+  for (int i=0; i <= 10; i++){
+  score[i] = i;
+  }
+  smack = new SoundFile(this, "smack.wav");
+  //fly_buzz = new SoundFile(this, "fly_buzz.wav");
+  fly = loadImage("fly.png");
+  swatter = loadImage("swatter.png");
+  flybye = loadImage("flybye.png");
+  swatted = loadImage("swatted.png");
+  cursor(swatter, mouseX, mouseY);
+}
+
+void draw(){
+  background(255);
+  fly_move();
+  fly_splat();
+  text(fly_score(), 550, 50);fill(0);textSize(50);
+  if(fly_dead == 10){
+    text("LEVEL 1 COMPLETE!", 100, 300);textSize(300);  
+    noLoop();
+  }
+}
+
+float fly_move(){
+   x += random(5)*x_dir;
+   y += random(5)*y_dir;
+  
+  //fly_buzz.duration();
+  //fly_buzz.play();
+  
+  if(x >= width - 40) {
+    x -= 1.2*random(10);
+    x_dir = -.1;
+  }else if(x <= width - width + 10){
+    x += 1.2*random(10);
+    x_dir = .1;
+  }
+  if(y >= height - 40){
+    y -= 1.2*random(10);
+    y_dir = -.1;
+  }else if(y <= height - height + 10){
+    y += 1.2*random(10);
+    y_dir = .1;
+  }
+    image(fly, x, y, 70, 70);
+   
+  return x;
+  
+}
+
+ 
+
+
+
+
+
+void mouseClicked(){
+  smack.play();
+  fly_counter += 1;
+  fly_dead += 1;
+  if(dist(mouseX, mouseY,x ,y ) < 65){
+    splat_x = x;
+    splat_y = y;
+    fly_alive = false;
+    x += random(400) * (y_dir * random(65));
+    y += random(400) * (x_dir * random(65));
+    y_dir = -1.2;
+    x_dir = -1.2;
+  }
+}
+
+
+
+
+int fly_score(){
+  fly_dead = score[fly_counter];
+  return fly_dead;
+  
+}
+
+
+void fly_splat(){
+  if(fly_alive == false){
+  image(flybye, splat_x, splat_y, 70, 70);
+  }
+}
